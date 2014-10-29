@@ -1,42 +1,51 @@
 <?php
 include 'vendor/autoload.php';
 
-$pdo = new \PDO('sqlite:/db/modulapp.db');
-$fluentpdo = new \FluentPDO($pdo);
+use eMapper\Mapper;
+use eMapper\Engine\SQLite\SQLiteDriver;
+use eMapper\Query\Attr;
+
+$mapper = new Mapper(new SQLiteDriver('db/modulapp.db'));
+$notes = $mapper->buildManager('Demo\Note');
+$contacts = $mapper->buildManager('Demo\Contact');
 $app = new \Slim\Slim();
 
 /**
  * NOTES
  */
 
-$app->get('/notes', function() use ($app, $fluentpdo) {
+//GET /notes
+$app->get('/notes', function() use ($app, $notes) {
 	$app->response->headers->set('Content-Type', 'application/json');
-	$app->response->write(json_encode($fluentpdo->from('notes')));
+	$app->response->write(json_encode($notes->find()));
 });
 
-$app->get('/notes/:id', function ($id) use ($app, $fluentpdo) {
+//GET /notes/{ID}
+$app->get('/notes/:id', function ($id) use ($app, $notes) {
+	$note = $notes->findByPk($id);
 	$app->response->headers->set('Content-Type', 'application/json');
-	$app->response->write(json_encode($fluentpdo->from('notes')->where('id', $id)));
+	$app->response->write(json_encode($note));
 });
 
-$app->post('/notes', function() use ($app, $fluentpdo) {
+//POST /notes
+$app->post('/notes', function() use ($app, $notes) {
 	$note = json_decode($app->request->getBody());
-	$id = $fluentpdo->insertInto('notes')->values($note);
-	
+	$notes->save($note);
 	$app->response->headers->set('Content-Type', 'application/json');
-	$app->response->write(json_encode($fluentpdo->from('notes')->where('id', $id)));
+	$app->response->write(json_encode($note));
 });
 
-$app->put('/notes/:id', function($id) use ($app, $fluentpdo) {
+//PUT /notes/{ID}
+$app->put('/notes/:id', function($id) use ($app, $notes) {
 	$note = json_decode($app->request->getBody());
-	$fluentpdo->update('notes')->set($note)->where('id', $id);
-	
+	$notes->save($note);
 	$app->response->headers->set('Content-Type', 'application/json');
-	$app->response->write(json_encode($fluentpdo->from('notes')->where('id', $id)));
+	$app->response->write(json_encode($note));
 });
 
-$app->delete('/books/:id', function ($id) use ($app, $fluentpdo) {
-	$fluentpdo->deleteFrom('notes')->where('id', $id);
+//DELETE /notes/{ID}
+$app->delete('/notes/:id', function ($id) use ($app, $notes) {
+	$notes->deleteWhere(Attr::id()->eq($id));
 	$app->response()->status(204); //avoid error handler call
 });
 
@@ -44,34 +53,38 @@ $app->delete('/books/:id', function ($id) use ($app, $fluentpdo) {
  * CONTACTS
  */
  
- $app->get('/contacts', function() use ($app, $fluentpdo) {
+ //GET /contacts
+$app->get('/contacts', function() use ($app, $contacts) {
 	$app->response->headers->set('Content-Type', 'application/json');
-	$app->response->write(json_encode($fluentpdo->from('contacts')));
+	$app->response->write(json_encode($contacts->find()));
 });
 
-$app->get('/contacts/:id', function ($id) use ($app, $fluentpdo) {
+//GET /contacts/{ID}
+$app->get('/contacts/:id', function ($id) use ($app, $contacts) {
+	$contact = $contacts->findByPk($id);
 	$app->response->headers->set('Content-Type', 'application/json');
-	$app->response->write(json_encode($fluentpdo->from('contacts')->where('id', $id)));
+	$app->response->write(json_encode($contact));
 });
 
-$app->post('/contacts', function() use ($app, $fluentpdo) {
+//POST /contacts
+$app->post('/contacts', function() use ($app, $contacts) {
 	$contact = json_decode($app->request->getBody());
-	$id = $fluentpdo->insertInto('contacts')->values($contact);
-	
+	$contacts->save($contact);
 	$app->response->headers->set('Content-Type', 'application/json');
-	$app->response->write(json_encode($fluentpdo->from('contacts')->where('id', $id)));
+	$app->response->write(json_encode($contact));
 });
 
-$app->put('/contacts/:id', function($id) use ($app, $fluentpdo) {
+//PUT /contacts/{ID}
+$app->put('/contacts/:id', function($id) use ($app, $contacts) {
 	$contact = json_decode($app->request->getBody());
-	$fluentpdo->update('contacts')->set($contact)->where('id', $id);
-	
+	$contacts->save($contact);
 	$app->response->headers->set('Content-Type', 'application/json');
-	$app->response->write(json_encode($fluentpdo->from('contacts')->where('id', $id)));
+	$app->response->write(json_encode($contact));
 });
 
-$app->delete('/contacts/:id', function ($id) use ($app, $fluentpdo) {
-	$fluentpdo->deleteFrom('contacts')->where('id', $id);
+//DELETE /contacts/{ID}
+$app->delete('/contacts/:id', function ($id) use ($app, $contacts) {
+	$contacts->deleteWhere(Attr::id()->eq($id));
 	$app->response()->status(204); //avoid error handler call
 });
 

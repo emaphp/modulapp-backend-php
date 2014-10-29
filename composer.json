@@ -1,9 +1,9 @@
 {
 	"require": {
-		"lichtner/fluentpdo": "dev-master",
+		"emapper/emapper": "3.3.*",
 		"slim/slim": "2.*"
 	},
 	"autoload": {
-		"psr-4": { "Demo": "lib" }
+		"psr-4": { "Demo\\": "lib" }
 	}
 }
