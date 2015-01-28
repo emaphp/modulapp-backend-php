@@ -1,6 +1,6 @@
 {
 	"require": {
-		"emapper/emapper": "3.3.*",
+		"emapper/emapper": "4.0.2",
 		"slim/slim": "2.*"
 	},
 	"autoload": {

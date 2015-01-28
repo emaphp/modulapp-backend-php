@@ -6,8 +6,8 @@ use eMapper\Engine\SQLite\SQLiteDriver;
 use eMapper\Query\Attr;
 
 $mapper = new Mapper(new SQLiteDriver('db/modulapp.db'));
-$notes = $mapper->buildManager('Demo\Note');
-$contacts = $mapper->buildManager('Demo\Contact');
+$notes = $mapper->newManager('Demo\Note');
+$contacts = $mapper->newManager('Demo\Contact');
 $app = new \Slim\Slim();
 
 /**
